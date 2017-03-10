@@ -1835,7 +1835,11 @@ class CommandContextImpl implements CommandContext, ModelControllerClientFactory
                     throw new UnsupportedCallbackException(current, "Realm choice not currently supported.");
                 } else if (current instanceof NameCallback) {
                     NameCallback ncb = (NameCallback) current;
-                    if (username == null) {
+                    final String defaultName = ncb.getDefaultName();
+                    if (defaultName != null) {
+                        // do not prompt
+                        username = defaultName;
+                    } else if (username == null) {
                         showRealm();
                         try {
                             if(console == null) {
