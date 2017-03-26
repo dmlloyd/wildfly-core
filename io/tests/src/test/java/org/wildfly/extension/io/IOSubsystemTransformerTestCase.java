@@ -51,7 +51,7 @@ public class IOSubsystemTransformerTestCase extends AbstractSubsystemBaseTest {
 
     @Override
     protected String getSubsystemXml() throws IOException {
-        return readResource("io-1.1-transformer.xml");
+        return readResource("io-2.0-transformer.xml");
     }
 
 
