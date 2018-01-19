@@ -47,6 +47,7 @@ import org.jboss.modules.DependencySpec;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleSpec;
 import org.jboss.modules.ResourceLoaderSpec;
+import org.jboss.modules.filter.ClassFilters;
 import org.jboss.modules.filter.MultiplePathFilterBuilder;
 import org.jboss.modules.filter.PathFilter;
 import org.jboss.modules.filter.PathFilters;
@@ -237,6 +238,17 @@ public class ModuleSpecProcessor implements DeploymentUnitProcessor {
             logger.debugf("Adding resource %s to module %s", resourceRoot.getRoot(), moduleIdentifier);
             addResourceRoot(specBuilder, resourceRoot, permFactories);
         }
+
+        specBuilder.addDependency(
+            DependencySpec.createLocalDependencySpec(
+                PathFilters.getMetaInfServicesFilter(),
+                PathFilters.acceptAll(),
+                PathFilters.is("META-INF/services/javax.ws.rs.client.ClientBuilder"),
+                PathFilters.rejectAll(),
+                ClassFilters.rejectAll(),
+                ClassFilters.rejectAll()
+            )
+        );
 
         createDependencies(specBuilder, dependencies, false);
         createDependencies(specBuilder, userDependencies, false);
