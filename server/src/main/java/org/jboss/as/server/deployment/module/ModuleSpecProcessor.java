@@ -43,6 +43,7 @@ import org.jboss.as.server.moduleservice.ModuleDefinition;
 import org.jboss.as.server.moduleservice.ModuleLoadService;
 import org.jboss.as.server.moduleservice.ModuleResolvePhaseService;
 import org.jboss.as.server.moduleservice.ServiceModuleLoader;
+import org.jboss.modules.ClassTransformer;
 import org.jboss.modules.DependencySpec;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
@@ -267,7 +268,7 @@ public class ModuleSpecProcessor implements DeploymentUnitProcessor {
         deploymentUnit.putAttachment(Attachments.MODULE_PERMISSIONS, permissionCollection);
 
         final DelegatingClassFileTransformer delegatingClassFileTransformer = new DelegatingClassFileTransformer();
-        specBuilder.setClassFileTransformer(delegatingClassFileTransformer);
+        specBuilder.setClassFileTransformer((ClassTransformer) delegatingClassFileTransformer);
         deploymentUnit.putAttachment(DelegatingClassFileTransformer.ATTACHMENT_KEY, delegatingClassFileTransformer);
         final ModuleSpec moduleSpec = specBuilder.create();
         final ServiceName moduleSpecServiceName = ServiceModuleLoader.moduleSpecServiceName(moduleIdentifier);

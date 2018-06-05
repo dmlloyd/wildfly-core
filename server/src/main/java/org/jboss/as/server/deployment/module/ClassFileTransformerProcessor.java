@@ -28,6 +28,8 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.modules.ClassTransformer;
+import org.jboss.modules.JLIClassTransformer;
 import org.jboss.modules.Module;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -49,16 +51,32 @@ public class ClassFileTransformerProcessor implements DeploymentUnitProcessor {
         if (module == null || transformer == null) {
             return;
         }
-        try {
-            for (String transformerClassName : moduleSpecification.getClassFileTransformers()) {
-                transformer.addTransformer((ClassFileTransformer) module.getClassLoader().loadClass(transformerClassName).newInstance());
+        for (String transformerClassName : moduleSpecification.getClassFileTransformers()) {
+            final Class<?> transformerClass;
+            try {
+                transformerClass = module.getClassLoader().loadClass(transformerClassName);
+            } catch (Exception e) {
+                throw ServerLogger.ROOT_LOGGER.failedToInstantiateClassFileTransformer(ClassTransformer.class.getSimpleName(), e);
             }
-            // activate transformer only after all delegate transformers have been added
-            // so that transformers themselves are not instrumented
-            transformer.setActive(true);
-        } catch (Exception e) {
-            throw ServerLogger.ROOT_LOGGER.failedToInstantiateClassFileTransformer(ClassFileTransformer.class.getSimpleName(), e);
+            final ClassTransformer instance;
+            if (ClassFileTransformer.class.isAssignableFrom(transformerClass)) {
+                try {
+                    instance = transformerClass.asSubclass(ClassTransformer.class).getConstructor().newInstance();
+                } catch (Exception e) {
+                    throw ServerLogger.ROOT_LOGGER.failedToInstantiateClassFileTransformer(ClassTransformer.class.getSimpleName(), e);
+                }
+            } else {
+                try {
+                    instance = new JLIClassTransformer(transformerClass.asSubclass(ClassFileTransformer.class).getConstructor().newInstance());
+                } catch (Exception e) {
+                    throw ServerLogger.ROOT_LOGGER.failedToInstantiateClassFileTransformer(ClassFileTransformer.class.getSimpleName(), e);
+                }
+            }
+            transformer.addTransformer(instance);
         }
+        // activate transformer only after all delegate transformers have been added
+        // so that transformers themselves are not instrumented
+        transformer.setActive(true);
     }
 
     @Override
