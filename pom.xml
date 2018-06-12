@@ -246,6 +246,7 @@
         <module>subsystem-test</module>
         <module>testsuite</module>
         <module>threads</module>
+        <module>thread-pool</module>
         <module>version</module>
     </modules>
 
@@ -1309,6 +1310,11 @@
             <dependency>
                 <groupId>org.wildfly.core</groupId>
                 <artifactId>wildfly-subsystem-test-framework</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-thread-pool</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

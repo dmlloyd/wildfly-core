@@ -477,6 +477,11 @@
 
         <dependency>
             <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-thread-pool</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-threads</artifactId>
         </dependency>
 

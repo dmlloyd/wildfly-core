@@ -149,7 +149,12 @@ public class DelegatingResource extends ResourceProvider.ResourceProviderRegistr
         getDelegate().writeModel(newModel);
     }
 
-    private Resource getDelegate() {
+    /**
+     * Get the delegate resource.
+     *
+     * @return the delegate resource (not {@code null})
+     */
+    public Resource getDelegate() {
         return this.delegateProvider.getDelegateResource();
     }
 

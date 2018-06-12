@@ -1,0 +1,69 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2018 Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.wildfly.extension.threadpool;
+
+import java.util.concurrent.ThreadFactory;
+
+import org.jboss.threads.JBossExecutors;
+import org.jboss.threads.JBossScheduledThreadPoolExecutor;
+
+/**
+ */
+final class ScheduledThreadPoolBuilder {
+    private int poolSize;
+    private long keepAliveTime;
+    private ThreadFactory threadFactory;
+
+    ScheduledThreadPoolBuilder() {
+    }
+
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    public void setPoolSize(final int poolSize) {
+        this.poolSize = poolSize;
+    }
+
+    public long getKeepAliveTime() {
+        return keepAliveTime;
+    }
+
+    public void setKeepAliveTime(final long keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
+    }
+
+    public ThreadFactory getThreadFactory() {
+        return threadFactory;
+    }
+
+    public void setThreadFactory(final ThreadFactory threadFactory) {
+        this.threadFactory = threadFactory;
+    }
+
+    public JBossScheduledThreadPoolExecutor build() {
+        final JBossScheduledThreadPoolExecutor executor = new JBossScheduledThreadPoolExecutor(
+            getPoolSize(),
+            getThreadFactory(),
+            JBossExecutors.abortPolicy()
+        );
+        executor.setKeepAliveTime(getKeepAliveTime());
+        return executor;
+    }
+}
